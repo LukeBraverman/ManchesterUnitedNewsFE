@@ -37,6 +37,7 @@ function App() {
     const [value, setValue] = useState(0);
     const [newsArticles, setNewsArticles] = useState(testData);
     const [loading, setLoading] = useState(true);
+    const [loadingVideo, setLoadingVideo] = useState(true);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -118,8 +119,6 @@ function App() {
                 >
                     <Tab disableRipple label="News" {...a11yProps(0)} />
                     <Tab disableRipple label="Behind the scenes" {...a11yProps(1)} />
-                    <Tab disableRipple label="Tech Stack" {...a11yProps(1)} />
-
                 </Tabs>
 
                 {/* Right Content Panel */}
@@ -169,18 +168,24 @@ function App() {
                     </TabPanel>
 
                     <TabPanel value={value} index={1}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <Typography variant="body1" color="text.secondary">
-                                Content coming soon for "Behind the scenes"...
-                            </Typography>
-                        </Box>
-                    </TabPanel>
-
-                    <TabPanel value={value} index={2}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <Typography variant="body1" color="text.secondary">
-                                Tech stack coming soon
-                            </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', position: 'relative' }}>
+                            {loadingVideo && (
+                                <CircularProgress
+                                    sx={{
+                                        position: 'absolute',
+                                        color: '#8B0000',
+                                    }}
+                                />
+                            )}
+                            <iframe
+                                width="640"
+                                height="360"
+                                src="https://www.loom.com/embed/aa13abbe49a243a48c2da1670c972538?sid=d3a176ea-d82d-4de4-8691-983e18bd4d81"
+                                frameBorder="0"
+                                allowFullScreen
+                                style={{ borderRadius: 8, visibility: loadingVideo ? 'hidden' : 'visible' }}
+                                onLoad={() => setLoadingVideo(false)}
+                            ></iframe>
                         </Box>
                     </TabPanel>
                 </Box>
