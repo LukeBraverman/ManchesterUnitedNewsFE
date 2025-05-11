@@ -4,6 +4,7 @@ import {
     Box, Button, Card, CardActions, CardContent, CardMedia,
     Typography, Tabs, Tab, AppBar, Toolbar, IconButton
 } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -35,24 +36,33 @@ function a11yProps(index) {
 function App() {
     const [value, setValue] = useState(0);
     const [newsArticles, setNewsArticles] = useState(testData);
+    const [loading, setLoading] = useState(true);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
     useEffect(() => {
-        // todo: set fallback worst case
-        console.log("EDIT V2: Running real API call")
+        console.log("EDIT V2: Running real API call");
         fetch('http://3.10.22.83:5021/api/news')
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("API fetch failed");
+                }
+                return response.json();
+            })
             .then((data) => {
                 setNewsArticles(data);
-                console.log('data',data)
             })
             .catch((error) => {
-                console.error('Error fetching news:', error);
+                console.error('Error fetching news, using fallback:', error);
+                setNewsArticles(testData);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }, []);
+
     return (
         <>
             <Box
@@ -108,6 +118,8 @@ function App() {
                 >
                     <Tab disableRipple label="News" {...a11yProps(0)} />
                     <Tab disableRipple label="Behind the scenes" {...a11yProps(1)} />
+                    <Tab disableRipple label="Tech Stack" {...a11yProps(1)} />
+
                 </Tabs>
 
                 {/* Right Content Panel */}
@@ -124,29 +136,35 @@ function App() {
                                 width: '100%',  // Make sure the content takes the full width
                             }}
                         >
-                            {newsArticles.map((article, index) => (
-                                <Card key={index} sx={{   maxWidth: 600, width: '100%' }}>
-                                    <CardMedia
-                                        component="img"
-                                        height="200"
-                                        image={article.image}
-                                        alt={article.title}
-                                    />
-                                    <CardContent>
-                                        <Typography gutterBottom variant="h5" component="div">
-                                            {article.title}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            {article.description}
-                                        </Typography>
-                                    </CardContent>
-                                    <CardActions>
-                                        <a href={article.url} target="_blank" rel="noopener noreferrer">
-                                            <Button sx={{color: '#8B0000'}} size="small">See Article</Button>
-                                        </a>
-                                    </CardActions>
-                                </Card>
-                            ))}
+                            {loading ? (
+                                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+                                    <CircularProgress sx={{ color: '#8B0000' }} />
+                                </Box>
+                            ) : (
+                                newsArticles.map((article, index) => (
+                                    <Card key={index} sx={{ maxWidth: 600, width: '100%' }}>
+                                        <CardMedia
+                                            component="img"
+                                            height="200"
+                                            image={article.image}
+                                            alt={article.title}
+                                        />
+                                        <CardContent>
+                                            <Typography gutterBottom variant="h5" component="div">
+                                                {article.title}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {article.description}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                            <a href={article.url} target="_blank" rel="noopener noreferrer">
+                                                <Button sx={{ color: '#8B0000' }} size="small">See Article</Button>
+                                            </a>
+                                        </CardActions>
+                                    </Card>
+                                ))
+                            )}
                         </Box>
                     </TabPanel>
 
@@ -154,6 +172,14 @@ function App() {
                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                             <Typography variant="body1" color="text.secondary">
                                 Content coming soon for "Behind the scenes"...
+                            </Typography>
+                        </Box>
+                    </TabPanel>
+
+                    <TabPanel value={value} index={2}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                            <Typography variant="body1" color="text.secondary">
+                                Tech stack coming soon
                             </Typography>
                         </Box>
                     </TabPanel>
