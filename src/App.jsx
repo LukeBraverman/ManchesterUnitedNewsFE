@@ -42,15 +42,16 @@ function App() {
 
     useEffect(() => {
         // todo: set fallback worst case
-        // fetch('http://18.170.60.222/api/news')
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         setNewsArticles(data);
-        //         console.log('data',data)
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error fetching news:', error);
-        //     });
+        console.log("Running real API call")
+        fetch('http://localhost:5021/api/news')
+            .then((response) => response.json())
+            .then((data) => {
+                setNewsArticles(data);
+                console.log('data',data)
+            })
+            .catch((error) => {
+                console.error('Error fetching news:', error);
+            });
     }, []);
     return (
         <>
