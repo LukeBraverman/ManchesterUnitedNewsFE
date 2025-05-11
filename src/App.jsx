@@ -42,8 +42,8 @@ function App() {
 
     useEffect(() => {
         // todo: set fallback worst case
-        console.log("Running real API call")
-        fetch('http://localhost:5021/api/news')
+        console.log("EDIT V2: Running real API call")
+        fetch('http://3.10.22.83:5021/api/news')
             .then((response) => response.json())
             .then((data) => {
                 setNewsArticles(data);
